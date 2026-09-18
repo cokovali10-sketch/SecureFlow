@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./scan-targets:/scan-targets:ro
+    environment:
+      - SECUREFLOW_VERBOSE=0
+      - SECUREFLOW_OUTPUT=human
+    command: ["scan", "/scan-targets"]
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    environment:
+      - VITE_API_URL=http://localhost:8000
