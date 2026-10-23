@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from secureflow.findings.models import ScannerType
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
+from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry
 
 
 # Pattern definitions: (rule_id, severity, confidence, title, description, regex, remediation)

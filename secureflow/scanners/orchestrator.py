@@ -8,9 +8,9 @@ from pathlib import Path
 from typing import Any
 
 from secureflow.core.config import Config
-from secureflow.findings.models import Finding, ScanResult
+from secureflow.findings.models import ScanResult
 from secureflow.risk.engine import RiskAssessment, RiskEngine
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry
+from secureflow.scanners.base.scanner import ScannerRegistry
 
 logger = logging.getLogger(__name__)
 

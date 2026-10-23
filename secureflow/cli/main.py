@@ -6,19 +6,16 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 import click
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.text import Text
-from rich.tree import Tree
 
 from secureflow import __version__
 from secureflow.core.config import Config
 from secureflow.findings.models import ScanResult, Severity
-from secureflow.risk.engine import RiskAssessment, RiskEngine
+from secureflow.risk.engine import RiskAssessment
 from secureflow.scanners.orchestrator import ScanOrchestrator
 
 console = Console()

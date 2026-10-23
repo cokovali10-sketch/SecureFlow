@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from secureflow.findings.models import ScannerType
 from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
@@ -102,7 +102,7 @@ class SastScanner(ScannerBase):
                 description=issue.get("issue_text", ""),
                 file_path=issue.get("filename", ""),
                 line=issue.get("line_number", 0),
-                evidence=issue.get("code", "")[:200],
+                evidence=issue.get("code", "")[:CONST_200],
                 remediation=issue.get("more_info", ""),
                 metadata={
                     "test_name": issue.get("test_name", ""),
@@ -238,7 +238,7 @@ class SastScanner(ScannerBase):
                             description=desc,
                             file_path=relative_path,
                             line=line_num,
-                            evidence=line.strip()[:200],
+                            evidence=line.strip()[:CONST_200],
                             remediation=remediation,
                             tags=["sast", "builtin"],
                         )
@@ -255,5 +255,8 @@ class SastScanner(ScannerBase):
 
 
 import logging
+# --- константы вынесены FORGE refactor ---
+CONST_200 = 200
+
 
 logger = logging.getLogger(__name__)

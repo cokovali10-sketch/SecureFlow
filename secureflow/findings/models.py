@@ -13,6 +13,9 @@ from enum import Enum
 from typing import Any, Optional
 
 from pydantic import BaseModel, Field, field_validator
+# --- константы вынесены FORGE refactor ---
+CONST_16 = 16
+
 
 
 class Severity(str, Enum):
@@ -103,7 +106,7 @@ class Reference(BaseModel):
 class Finding(BaseModel):
     """Unified security finding from any scanner."""
 
-    id: str = Field(default_factory=lambda: uuid.uuid4().hex[:16])
+    id: str = Field(default_factory=lambda: uuid.uuid4().hex[:CONST_16])
     scanner: ScannerType
     rule: str
     severity: Severity
@@ -128,7 +131,7 @@ class Finding(BaseModel):
     def _compute_fingerprint(self) -> str:
         """Compute a deterministic fingerprint for deduplication."""
         raw = f"{self.scanner.value}:{self.rule}:{self.location.file_path}:{self.location.line}:{self.title}"
-        return hashlib.sha256(raw.encode()).hexdigest()[:16]
+        return hashlib.sha256(raw.encode()).hexdigest()[:CONST_16]
 
     def suppress(self, reason: str = "") -> None:
         """Suppress this finding."""
@@ -166,7 +169,7 @@ class Finding(BaseModel):
 class ScanResult(BaseModel):
     """Result of a complete scan."""
 
-    id: str = Field(default_factory=lambda: uuid.uuid4().hex[:16])
+    id: str = Field(default_factory=lambda: uuid.uuid4().hex[:CONST_16])
     target: str
     findings: list[Finding] = Field(default_factory=list)
     scanner_used: list[str] = Field(default_factory=list)

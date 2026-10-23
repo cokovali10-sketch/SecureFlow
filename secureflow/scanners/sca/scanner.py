@@ -10,7 +10,7 @@ import json
 import re
 import shutil
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from secureflow.findings.models import ScannerType
 from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError

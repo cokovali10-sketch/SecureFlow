@@ -10,7 +10,7 @@ import json
 import re
 import shutil
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from secureflow.findings.models import ScannerType
 from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
@@ -160,7 +160,7 @@ class ContainerScanner(ScannerBase):
                         description=desc,
                         file_path=file_path,
                         line=line_num,
-                        evidence=stripped[:200],
+                        evidence=stripped[:CONST_200],
                         remediation=remediation,
                         tags=["container", "dockerfile"],
                     )
@@ -280,7 +280,7 @@ class ContainerScanner(ScannerBase):
                         severity=severity,
                         confidence="high",
                         title=f"{vuln.get('VulnerabilityID', 'Unknown')}: {vuln.get('PkgName', '')}",
-                        description=vuln.get("Title", vuln.get("Description", "")[:200]),
+                        description=vuln.get("Title", vuln.get("Description", "")[:CONST_200]),
                         evidence=f"{vuln.get('PkgName', '')} {vuln.get('InstalledVersion', '')}",
                         remediation=f"Upgrade {vuln.get('PkgName', '')} to {vuln.get('FixedVersion', 'latest')}.",
                         metadata={
@@ -306,5 +306,8 @@ class ContainerScanner(ScannerBase):
 
 
 import logging
+# --- константы вынесены FORGE refactor ---
+CONST_200 = 200
+
 
 logger = logging.getLogger(__name__)

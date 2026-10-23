@@ -1,6 +1,5 @@
 """Tests for the risk engine."""
 
-import pytest
 from secureflow.core.config import RiskConfig
 from secureflow.findings.models import (
     Confidence,
@@ -10,7 +9,11 @@ from secureflow.findings.models import (
     ScannerType,
     Severity,
 )
-from secureflow.risk.engine import RiskAssessment, RiskEngine
+from secureflow.risk.engine import RiskEngine
+# --- константы вынесены FORGE refactor ---
+CONST_5 = 5
+CONST_90 = 90.0
+
 
 
 class TestRiskEngine:
@@ -38,7 +41,7 @@ class TestRiskEngine:
         ]
         assessment = self.engine.assess(result)
         assert assessment.score < 100.0
-        assert assessment.score == 90.0  # 100 - (10.0 * 1.0) = 90
+        assert assessment.score == CONST_90  # 100 - (10.0 * 1.0) = 90
         # Score 90 = grade A (passes threshold)
         # But with more findings it should fail
 
@@ -56,13 +59,13 @@ class TestRiskEngine:
         ]
         assessment = self.engine.assess(result)
         assert assessment.score < 100.0
-        assert assessment.score > 90.0  # 4.0 * 0.6 = 2.4 penalty
+        assert assessment.score > CONST_90  # 4.0 * 0.6 = 2.4 penalty
 
     def test_grade_thresholds(self):
         engine = RiskEngine(RiskConfig(
             critical_weight=15.0,
             high_weight=10.0,
-            medium_weight=5.0,
+            medium_weight=CONST_5,
             low_weight=2.0,
         ))
         result = ScanResult(target="/test")
@@ -119,7 +122,7 @@ class TestRiskEngine:
                 title="T",
                 description="",
             )
-            for _ in range(5)  # 5 critical = 50 penalty, score = 50 = grade D = fail
+            for _ in range(CONST_5)  # 5 critical = 50 penalty, score = 50 = grade D = fail
         ]
         assert self.engine.should_fail(result) is True
 
@@ -148,5 +151,5 @@ class TestRiskEngine:
         ]
         assessment = self.engine.assess(result)
         top = assessment.summary["top_risks"]
-        assert len(top) <= 5
+        assert len(top) <= CONST_5
         assert top[0]["severity"] == "critical"

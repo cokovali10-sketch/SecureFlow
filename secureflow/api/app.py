@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from secureflow import __version__
-from secureflow.core.config import Config
 from secureflow.scanners.orchestrator import ScanOrchestrator
 
 logger = logging.getLogger(__name__)

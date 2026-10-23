@@ -1,4 +1,3 @@
-import os
 AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
 API_KEY = "api_key=1234567890abcdef1234"
 PASSWORD = "password = 'supersecretpassword123'"

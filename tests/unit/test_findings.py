@@ -11,12 +11,15 @@ from secureflow.findings.models import (
     ScannerType,
     Severity,
 )
+# --- константы вынесены FORGE refactor ---
+CONST_7 = 7.0
+
 
 
 class TestSeverity:
     def test_weight_values(self):
         assert Severity.CRITICAL.weight == 10.0
-        assert Severity.HIGH.weight == 7.0
+        assert Severity.HIGH.weight == CONST_7
         assert Severity.MEDIUM.weight == 4.0
         assert Severity.LOW.weight == 1.0
         assert Severity.INFO.weight == 0.0
@@ -148,7 +151,7 @@ class TestFinding:
             title="Test",
             description="Desc",
         )
-        assert f.risk_score == 7.0  # 7.0 * 1.0
+        assert f.risk_score == CONST_7  # 7.0 * 1.0
 
     def test_risk_score_medium_low(self):
         f = Finding(

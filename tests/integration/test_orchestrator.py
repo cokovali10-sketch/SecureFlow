@@ -1,9 +1,7 @@
 """Integration tests for the scan orchestrator."""
 
-import tempfile
 from pathlib import Path
 
-import pytest
 
 from secureflow.core.config import Config
 from secureflow.scanners.orchestrator import ScanOrchestrator

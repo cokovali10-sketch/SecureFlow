@@ -1,7 +1,5 @@
 """Tests for scanner framework."""
 
-import tempfile
-from pathlib import Path
 
 import pytest
 
