@@ -1,0 +1,73 @@
+name: SARIF Analysis
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  sarif:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install bandit pip-audit trivy secureflow
+      - run: secureflow scan . --output sarif --format sarif > secureflow.sarif || true
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: secureflow.sarif
+          category: "secureflow"
+
+  policy:
+    needs: sarif
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install secureflow
+      - run: |
+          # Read SARIF results
+          python -c "
+import json, sys
+try:
+    with open('secureflow.sarif') as f:
+        sarif = json.load(f)
+    runs = sarif.get('runs', [])
+    if not runs:
+        print('No SARIF runs found - all clean')
+        sys.exit(0)
+    errors = []
+    for run in runs:
+        for result in run.get('results', []):
+            level = result.get('level', 'note')
+            message = result.get('text', '')
+            errors.append((level, message))
+    if not errors:
+        print('No findings - all clean')
+        sys.exit(0)
+    # Count by level
+    critical = sum(1 for l, _ in errors if l == 'critical')
+    high = sum(1 for l, _ in errors if l == 'high')
+    medium = sum(1 for l, _ in errors if l == 'medium')
+    print(f'Findings: critical={critical}, high={high}, medium={medium}')
+    # Policy: fail on critical or high
+    if critical > 0:
+        print('FAIL: critical findings detected')
+        sys.exit(1)
+    if high > 0:
+        print('FAIL: high severity findings detected')
+        sys.exit(1)
+    print('PASS: no critical or high findings')
+"
+      "
