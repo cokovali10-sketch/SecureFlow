@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 
+
 def secure_function():
     """This function uses safe patterns."""
     secret = os.environ.get("API_KEY")
@@ -19,8 +20,10 @@ def secure_function():
     )
     return result.stdout
 
+
 def hash_data(data: str) -> str:
     return hashlib.sha256(data.encode()).hexdigest()
+
 
 def safe_load_config(path: str) -> dict:
     with open(path) as f:

@@ -13,8 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from secureflow.findings.models import ScannerType
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
-
+from secureflow.scanners.base.scanner import ScanError, ScannerBase, ScannerRegistry
 
 # Known vulnerable packages (subset for built-in detection)
 KNOWN_VULNERABLE: dict[str, dict[str, str]] = {
@@ -47,7 +46,7 @@ class ScaScanner(ScannerBase):
         """SCA scanner always available (built-in + optional pip-audit)."""
         return True
 
-    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list:
+    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list[Any]:
         """Scan dependencies for known vulnerabilities."""
         from secureflow.findings.models import Finding
 
@@ -63,7 +62,7 @@ class ScaScanner(ScannerBase):
 
         return findings
 
-    def _scan_requirements(self, target: Path) -> list:
+    def _scan_requirements(self, target: Path) -> list[Any]:
         """Parse requirements.txt files for vulnerable packages."""
         from secureflow.findings.models import Finding
 
@@ -109,7 +108,7 @@ class ScaScanner(ScannerBase):
 
         return findings
 
-    def _scan_pyproject(self, target: Path) -> list:
+    def _scan_pyproject(self, target: Path) -> list[Any]:
         """Parse pyproject.toml for dependencies."""
         from secureflow.findings.models import Finding
 
@@ -121,6 +120,7 @@ class ScaScanner(ScannerBase):
 
         try:
             import tomllib
+
             with open(pyproject, "rb") as f:
                 data = tomllib.load(f)
         except Exception:
@@ -151,7 +151,7 @@ class ScaScanner(ScannerBase):
 
         return findings
 
-    def _scan_package_json(self, target: Path) -> list:
+    def _scan_package_json(self, target: Path) -> list[Any]:
         """Parse package.json for vulnerable npm dependencies."""
         from secureflow.findings.models import Finding
 
@@ -192,7 +192,7 @@ class ScaScanner(ScannerBase):
 
         return findings
 
-    def _run_pip_audit(self, target: Path) -> list:
+    def _run_pip_audit(self, target: Path) -> list[Any]:
         """Run pip-audit for comprehensive Python vulnerability scanning."""
         from secureflow.findings.models import Finding
 
@@ -278,8 +278,9 @@ class ScaScanner(ScannerBase):
     def _version_in_range(self, version: str, vuln_range: str) -> bool:
         """Check if version falls within vulnerable range."""
         try:
-            import packaging.version
             import packaging.specifiers
+            import packaging.version
+
             spec = packaging.specifiers.SpecifierSet(f"<{vuln_range.lstrip('<>!=~')}")
             return packaging.version.parse(version) in spec
         except Exception:

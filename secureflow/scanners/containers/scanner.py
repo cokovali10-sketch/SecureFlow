@@ -13,8 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from secureflow.findings.models import ScannerType
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
-
+from secureflow.scanners.base.scanner import ScanError, ScannerBase, ScannerRegistry
 
 DOCKERFILE_RULES = [
     (
@@ -100,7 +99,7 @@ class ContainerScanner(ScannerBase):
     name = "containers"
     description = "Dockerfile security analysis and container vulnerability scanning"
 
-    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list:
+    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list[Any]:
         """Scan Dockerfiles and optionally container images."""
         from secureflow.findings.models import Finding
 
@@ -115,7 +114,7 @@ class ContainerScanner(ScannerBase):
 
         return findings
 
-    def _scan_dockerfiles(self, target: Path) -> list:
+    def _scan_dockerfiles(self, target: Path) -> list[Any]:
         """Scan all Dockerfiles for security issues."""
         from secureflow.findings.models import Finding
 
@@ -138,7 +137,7 @@ class ContainerScanner(ScannerBase):
 
         return findings
 
-    def _analyze_dockerfile(self, content: str, file_path: str) -> list:
+    def _analyze_dockerfile(self, content: str, file_path: str) -> list[Any]:
         """Analyze Dockerfile content for security issues."""
         from secureflow.findings.models import Finding
 
@@ -168,7 +167,7 @@ class ContainerScanner(ScannerBase):
 
         return findings
 
-    def _scan_docker_compose(self, target: Path) -> list:
+    def _scan_docker_compose(self, target: Path) -> list[Any]:
         """Scan docker-compose files for security issues."""
         from secureflow.findings.models import Finding
 
@@ -185,6 +184,7 @@ class ContainerScanner(ScannerBase):
 
             try:
                 import yaml
+
                 content = yaml.safe_load(compose_file.read_text(encoding="utf-8"))
             except Exception:
                 continue
@@ -197,7 +197,7 @@ class ContainerScanner(ScannerBase):
 
         return findings
 
-    def _analyze_compose(self, data: dict, file_path: str) -> list:
+    def _analyze_compose(self, data: dict[str, Any], file_path: str) -> list[Any]:
         """Analyze docker-compose data for security issues."""
         from secureflow.findings.models import Finding
 
@@ -258,7 +258,7 @@ class ContainerScanner(ScannerBase):
 
         return findings
 
-    def _run_trivy(self, target: Path, image: str) -> list:
+    def _run_trivy(self, target: Path, image: str) -> list[Any]:
         """Run Trivy for container image vulnerability scanning."""
         from secureflow.findings.models import Finding
 
@@ -306,6 +306,7 @@ class ContainerScanner(ScannerBase):
 
 
 import logging
+
 # --- константы вынесены FORGE refactor ---
 CONST_200 = 200
 

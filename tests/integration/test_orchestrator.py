@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-
 from secureflow.core.config import Config
 from secureflow.scanners.orchestrator import ScanOrchestrator
 
@@ -23,7 +22,7 @@ class TestScanOrchestrator:
     def test_scan_vulnerable_fixtures(self, tmp_path):
         # Create a vulnerable test file
         vuln_file = tmp_path / "vuln.py"
-        vuln_file.write_text('''
+        vuln_file.write_text("""
 import os
 import pickle
 import hashlib
@@ -37,7 +36,7 @@ yaml.load(content)
 hashlib.md5(data)
 
 subprocess.call(cmd, shell=True)
-''')
+""")
 
         orchestrator = ScanOrchestrator(Config())
         result, assessment = orchestrator.scan_with_assessment(
@@ -48,7 +47,7 @@ subprocess.call(cmd, shell=True)
 
     def test_scan_safe_fixtures(self, tmp_path):
         safe_file = tmp_path / "safe.py"
-        safe_file.write_text('''
+        safe_file.write_text("""
 import os
 import hashlib
 import subprocess
@@ -57,12 +56,10 @@ def secure():
     key = os.environ.get("API_KEY")
     result = subprocess.run(["ls"], capture_output=True, shell=False)
     return hashlib.sha256(b"data").hexdigest()
-''')
+""")
 
         orchestrator = ScanOrchestrator(Config())
-        result, assessment = orchestrator.scan_with_assessment(
-            tmp_path, scanners=["sast"]
-        )
+        result, assessment = orchestrator.scan_with_assessment(tmp_path, scanners=["sast"])
         # Safe code should have fewer/no high findings
         high_findings = [f for f in result.findings if f.severity.value in ("high", "critical")]
         assert len(high_findings) == 0

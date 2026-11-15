@@ -77,7 +77,9 @@ class ScanOrchestrator:
                 logger.error("Scanner %s failed: %s", scanner_name, e)
 
         result.deduplicate()
-        result.completed_at = __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
+        result.completed_at = __import__("datetime").datetime.now(
+            __import__("datetime").timezone.utc
+        )
         result.duration_seconds = time.time() - start_time
 
         return result

@@ -1,5 +1,5 @@
 """Scanner base interface."""
 
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
+from secureflow.scanners.base.scanner import ScanError, ScannerBase, ScannerRegistry
 
-__all__ = ["ScannerBase", "ScannerRegistry", "ScanError"]
+__all__ = ["ScanError", "ScannerBase", "ScannerRegistry"]

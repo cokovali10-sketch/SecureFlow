@@ -1,11 +1,10 @@
 """Tests for scanner framework."""
 
-
 import pytest
 
 from secureflow.core.config import ScannerConfig
 from secureflow.findings.models import ScannerType, Severity
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
+from secureflow.scanners.base.scanner import ScanError, ScannerBase, ScannerRegistry
 
 
 class TestScannerRegistry:
@@ -35,70 +34,98 @@ class TestScannerBase:
     def test_validate_config_valid(self):
         config = ScannerConfig(timeout=60)
         # Should not raise
-        scanner = type("TestScanner", (ScannerBase,), {
-            "scanner_type": ScannerType.CUSTOM,
-            "name": "test_validate",
-            "description": "",
-            "scan": lambda self, t, o=None: [],
-        })(config=config)
+        type(
+            "TestScanner",
+            (ScannerBase,),
+            {
+                "scanner_type": ScannerType.CUSTOM,
+                "name": "test_validate",
+                "description": "",
+                "scan": lambda self, t, o=None: [],
+            },
+        )(config=config)
 
     def test_validate_config_zero_timeout(self):
         config = ScannerConfig(timeout=0)
         with pytest.raises(ValueError, match="positive"):
-            type("TestScanner", (ScannerBase,), {
-                "scanner_type": ScannerType.CUSTOM,
-                "name": "test_zero",
-                "description": "",
-                "scan": lambda self, t, o=None: [],
-            })(config=config)
+            type(
+                "TestScanner",
+                (ScannerBase,),
+                {
+                    "scanner_type": ScannerType.CUSTOM,
+                    "name": "test_zero",
+                    "description": "",
+                    "scan": lambda self, t, o=None: [],
+                },
+            )(config=config)
 
     def test_validate_config_huge_timeout(self):
         config = ScannerConfig(timeout=9999)
         with pytest.raises(ValueError, match="too large"):
-            type("TestScanner", (ScannerBase,), {
-                "scanner_type": ScannerType.CUSTOM,
-                "name": "test_huge",
-                "description": "",
-                "scan": lambda self, t, o=None: [],
-            })(config=config)
+            type(
+                "TestScanner",
+                (ScannerBase,),
+                {
+                    "scanner_type": ScannerType.CUSTOM,
+                    "name": "test_huge",
+                    "description": "",
+                    "scan": lambda self, t, o=None: [],
+                },
+            )(config=config)
 
     def test_validate_target_nonexistent(self, tmp_path):
-        scanner = type("TestScanner", (ScannerBase,), {
-            "scanner_type": ScannerType.CUSTOM,
-            "name": "test_target",
-            "description": "",
-            "scan": lambda self, t, o=None: [],
-        })()
+        scanner = type(
+            "TestScanner",
+            (ScannerBase,),
+            {
+                "scanner_type": ScannerType.CUSTOM,
+                "name": "test_target",
+                "description": "",
+                "scan": lambda self, t, o=None: [],
+            },
+        )()
         with pytest.raises(ScanError, match="does not exist"):
             scanner._validate_target(tmp_path / "nonexistent")
 
     def test_run_subprocess_empty_command(self):
-        scanner = type("TestScanner", (ScannerBase,), {
-            "scanner_type": ScannerType.CUSTOM,
-            "name": "test_empty_cmd",
-            "description": "",
-            "scan": lambda self, t, o=None: [],
-        })()
+        scanner = type(
+            "TestScanner",
+            (ScannerBase,),
+            {
+                "scanner_type": ScannerType.CUSTOM,
+                "name": "test_empty_cmd",
+                "description": "",
+                "scan": lambda self, t, o=None: [],
+            },
+        )()
         with pytest.raises(ScanError, match="Empty command"):
             scanner._run_subprocess([])
 
     def test_run_subprocess_command_not_found(self):
-        scanner = type("TestScanner", (ScannerBase,), {
-            "scanner_type": ScannerType.CUSTOM,
-            "name": "test_not_found",
-            "description": "",
-            "scan": lambda self, t, o=None: [],
-        })()
+        scanner = type(
+            "TestScanner",
+            (ScannerBase,),
+            {
+                "scanner_type": ScannerType.CUSTOM,
+                "name": "test_not_found",
+                "description": "",
+                "scan": lambda self, t, o=None: [],
+            },
+        )()
         with pytest.raises(ScanError, match="not found"):
             scanner._run_subprocess(["nonexistent_command_xyz_12345"])
 
     def test_make_finding(self):
-        scanner = type("TestScanner", (ScannerBase,), {
-            "scanner_type": ScannerType.SECRETS,
-            "name": "test_make_finding",
-            "description": "",
-            "scan": lambda self, t, o=None: [],
-        })()
+        scanner = type(
+            "TestScanner",
+            (ScannerBase,),
+            {
+                "scanner_type": ScannerType.SECRETS,
+                "name": "test_make_finding",
+                "description": "",
+                "scan": lambda self, t, o=None: [],
+            },
+        )()
         finding = scanner._make_finding(
             rule="test-rule",
             severity="high",

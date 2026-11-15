@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import hashlib
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
+
 # --- константы вынесены FORGE refactor ---
 CONST_16 = 16
-
 
 
 class Severity(str, Enum):
@@ -81,10 +81,10 @@ class Location(BaseModel):
     file_path: str = ""
     line: int = 0
     column: int = 0
-    end_line: Optional[int] = None
-    end_column: Optional[int] = None
-    function_name: Optional[str] = None
-    class_name: Optional[str] = None
+    end_line: int | None = None
+    end_column: int | None = None
+    function_name: str | None = None
+    class_name: str | None = None
 
     @field_validator("file_path")
     @classmethod
@@ -95,12 +95,12 @@ class Location(BaseModel):
 class Reference(BaseModel):
     """External reference for a finding."""
 
-    url: Optional[str] = None
-    cve_id: Optional[str] = None
-    cwe_id: Optional[str] = None
-    owasp_id: Optional[str] = None
-    rule_id: Optional[str] = None
-    description: Optional[str] = None
+    url: str | None = None
+    cve_id: str | None = None
+    cwe_id: str | None = None
+    owasp_id: str | None = None
+    rule_id: str | None = None
+    description: str | None = None
 
 
 class Finding(BaseModel):
@@ -119,8 +119,8 @@ class Finding(BaseModel):
     references: list[Reference] = Field(default_factory=list)
     fingerprint: str = ""
     status: FindingStatus = FindingStatus.OPEN
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
 
@@ -136,24 +136,24 @@ class Finding(BaseModel):
     def suppress(self, reason: str = "") -> None:
         """Suppress this finding."""
         self.status = FindingStatus.SUPPRESSED
-        self.updated_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(UTC)
         if reason:
             self.metadata["suppress_reason"] = reason
 
     def resolve(self) -> None:
         """Mark finding as resolved."""
         self.status = FindingStatus.RESOLVED
-        self.updated_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(UTC)
 
     def confirm(self) -> None:
         """Confirm this finding is a true positive."""
         self.status = FindingStatus.CONFIRMED
-        self.updated_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(UTC)
 
     def mark_false_positive(self) -> None:
         """Mark as false positive."""
         self.status = FindingStatus.FALSE_POSITIVE
-        self.updated_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(UTC)
 
     @property
     def is_active(self) -> bool:
@@ -173,10 +173,10 @@ class ScanResult(BaseModel):
     target: str
     findings: list[Finding] = Field(default_factory=list)
     scanner_used: list[str] = Field(default_factory=list)
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: Optional[datetime] = None
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime | None = None
     duration_seconds: float = 0.0
-    error: Optional[str] = None
+    error: str | None = None
 
     @property
     def total_findings(self) -> int:

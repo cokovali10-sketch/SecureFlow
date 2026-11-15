@@ -5,15 +5,15 @@ from secureflow.findings.models import (
     Confidence,
     Finding,
     Location,
-    ScanResult,
     ScannerType,
+    ScanResult,
     Severity,
 )
 from secureflow.risk.engine import RiskEngine
+
 # --- константы вынесены FORGE refactor ---
 CONST_5 = 5
 CONST_90 = 90.0
-
 
 
 class TestRiskEngine:
@@ -62,12 +62,14 @@ class TestRiskEngine:
         assert assessment.score > CONST_90  # 4.0 * 0.6 = 2.4 penalty
 
     def test_grade_thresholds(self):
-        engine = RiskEngine(RiskConfig(
-            critical_weight=15.0,
-            high_weight=10.0,
-            medium_weight=CONST_5,
-            low_weight=2.0,
-        ))
+        engine = RiskEngine(
+            RiskConfig(
+                critical_weight=15.0,
+                high_weight=10.0,
+                medium_weight=CONST_5,
+                low_weight=2.0,
+            )
+        )
         result = ScanResult(target="/test")
         result.findings = [
             Finding(
@@ -106,8 +108,12 @@ class TestRiskEngine:
         ]
         assessment = self.engine.assess(result)
         assert len(assessment.recommendations) > 0
-        has_secret_rec = any("credential" in r.lower() or "secret" in r.lower() for r in assessment.recommendations)
-        has_dep_rec = any("dependenc" in r.lower() or "update" in r.lower() for r in assessment.recommendations)
+        has_secret_rec = any(
+            "credential" in r.lower() or "secret" in r.lower() for r in assessment.recommendations
+        )
+        has_dep_rec = any(
+            "dependenc" in r.lower() or "update" in r.lower() for r in assessment.recommendations
+        )
         assert has_secret_rec
         assert has_dep_rec
 
@@ -142,12 +148,14 @@ class TestRiskEngine:
                 description="",
                 location=Location(file_path=f"file{i}.py", line=i),
             )
-            for i, (sev, conf) in enumerate([
-                (Severity.LOW, Confidence.LOW),
-                (Severity.MEDIUM, Confidence.MEDIUM),
-                (Severity.HIGH, Confidence.HIGH),
-                (Severity.CRITICAL, Confidence.HIGH),
-            ])
+            for i, (sev, conf) in enumerate(
+                [
+                    (Severity.LOW, Confidence.LOW),
+                    (Severity.MEDIUM, Confidence.MEDIUM),
+                    (Severity.HIGH, Confidence.HIGH),
+                    (Severity.CRITICAL, Confidence.HIGH),
+                ]
+            )
         ]
         assessment = self.engine.assess(result)
         top = assessment.summary["top_risks"]

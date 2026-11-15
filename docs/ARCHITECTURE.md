@@ -118,6 +118,7 @@ Coordinates the scan pipeline:
 from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry
 from secureflow.findings.models import ScannerType
 
+
 @ScannerRegistry.register
 class MyScanner(ScannerBase):
     scanner_type = ScannerType.CUSTOM

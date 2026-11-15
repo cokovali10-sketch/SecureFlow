@@ -12,8 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from secureflow.findings.models import ScannerType
-from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry, ScanError
-
+from secureflow.scanners.base.scanner import ScanError, ScannerBase, ScannerRegistry
 
 BANDIT_SEVERITY_MAP = {
     "LOW": "low",
@@ -42,7 +41,7 @@ class SastScanner(ScannerBase):
         """Check if Bandit is installed."""
         return shutil.which("bandit") is not None
 
-    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list:
+    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list[Any]:
         """Run Bandit SAST scan."""
         from secureflow.findings.models import Finding
 
@@ -61,23 +60,27 @@ class SastScanner(ScannerBase):
 
         return findings
 
-    def _run_bandit(self, target: Path) -> list:
+    def _run_bandit(self, target: Path) -> list[Any]:
         """Execute Bandit and parse results."""
-        from secureflow.findings.models import Confidence, Location, Severity
 
         output_file = target / ".secureflow_bandit.json"
 
         cmd = [
             "bandit",
-            "-r", str(target),
-            "-f", "json",
-            "-o", str(output_file),
-            "--severity-level", "low",
-            "--confidence-level", "low",
+            "-r",
+            str(target),
+            "-f",
+            "json",
+            "-o",
+            str(output_file),
+            "--severity-level",
+            "low",
+            "--confidence-level",
+            "low",
         ]
         cmd.extend(self.config.extra_args)
 
-        result = self._run_subprocess(cmd, cwd=target)
+        self._run_subprocess(cmd, cwd=target)
 
         if not output_file.exists():
             return []
@@ -114,7 +117,7 @@ class SastScanner(ScannerBase):
 
         return findings
 
-    def _builtin_scan(self, target: Path) -> list:
+    def _builtin_scan(self, target: Path) -> list[Any]:
         """Built-in basic SAST checks when Bandit is not available."""
         from secureflow.findings.models import Finding
 
@@ -227,8 +230,17 @@ class SastScanner(ScannerBase):
             relative_path = str(py_file.relative_to(target)).replace("\\", "/")
 
             for line_num, line in enumerate(lines, start=1):
-                for rule_id, severity, conf, title, desc, pattern, remediation in dangerous_patterns:
+                for (
+                    rule_id,
+                    severity,
+                    conf,
+                    title,
+                    desc,
+                    pattern,
+                    remediation,
+                ) in dangerous_patterns:
                     import re
+
                     if re.search(pattern, line):
                         finding = self._make_finding(
                             rule=rule_id,
@@ -255,6 +267,7 @@ class SastScanner(ScannerBase):
 
 
 import logging
+
 # --- константы вынесены FORGE refactor ---
 CONST_200 = 200
 

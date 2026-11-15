@@ -61,12 +61,14 @@ class Config:
 
     project_name: str = "secureflow"
     version: str = "0.1.0"
-    scanners: dict[str, ScannerConfig] = field(default_factory=lambda: {
-        "secrets": ScannerConfig(),
-        "sast": ScannerConfig(),
-        "sca": ScannerConfig(),
-        "containers": ScannerConfig(enabled=False),
-    })
+    scanners: dict[str, ScannerConfig] = field(
+        default_factory=lambda: {
+            "secrets": ScannerConfig(),
+            "sast": ScannerConfig(),
+            "sca": ScannerConfig(),
+            "containers": ScannerConfig(enabled=False),
+        }
+    )
     risk: RiskConfig = field(default_factory=RiskConfig)
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
     security: SecurityConfig = field(default_factory=SecurityConfig)
@@ -90,6 +92,7 @@ class Config:
             return cls()
 
         import tomllib
+
         with open(path, "rb") as f:
             data = tomllib.load(f)
 

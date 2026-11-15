@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,8 +34,8 @@ app.add_middleware(
 
 class ScanRequest(BaseModel):
     target: str = Field(..., description="Path to scan")
-    scanners: Optional[list[str]] = Field(None, description="Specific scanners to run")
-    options: Optional[dict[str, Any]] = Field(None, description="Scan options")
+    scanners: list[str] | None = Field(None, description="Specific scanners to run")
+    options: dict[str, Any] | None = Field(None, description="Scan options")
 
 
 class FindingResponse(BaseModel):

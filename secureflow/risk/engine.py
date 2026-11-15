@@ -151,17 +151,11 @@ class RiskEngine:
 
         scanner_counts = self._count_by_scanner(findings)
         if scanner_counts.get("secrets", 0) > 0:
-            recommendations.append(
-                "Rotate any exposed credentials and move secrets to a vault."
-            )
+            recommendations.append("Rotate any exposed credentials and move secrets to a vault.")
         if scanner_counts.get("sca", 0) > 0:
-            recommendations.append(
-                "Update vulnerable dependencies to patched versions."
-            )
+            recommendations.append("Update vulnerable dependencies to patched versions.")
         if scanner_counts.get("sast", 0) > 0:
-            recommendations.append(
-                "Review flagged code patterns for security best practices."
-            )
+            recommendations.append("Review flagged code patterns for security best practices.")
         if scanner_counts.get("container", 0) > 0:
             recommendations.append(
                 "Harden container configurations following CIS Docker Benchmark."

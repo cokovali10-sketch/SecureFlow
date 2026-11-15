@@ -35,6 +35,7 @@ class TestCLI:
         result = runner.invoke(main, ["scan", str(tmp_path), "--output", "json"])
         assert result.exit_code == 0
         import json
+
         data = json.loads(result.output)
         assert "scan" in data
         assert "risk" in data

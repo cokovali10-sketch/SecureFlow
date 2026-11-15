@@ -9,8 +9,8 @@ from pathlib import Path
 
 import click
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 
 from secureflow import __version__
 from secureflow.core.config import Config
@@ -43,18 +43,22 @@ def format_human(result: ScanResult, assessment: RiskAssessment) -> None:
     }
 
     console.print()
-    console.print(Panel(
-        f"[bold]SecureFlow Security Scan[/bold]\n"
-        f"Target: {result.target}\n"
-        f"Duration: {result.duration_seconds:.1f}s\n"
-        f"Scanners: {', '.join(result.scanner_used)}",
-        title="Scan Complete",
-        border_style="green" if assessment.pass_fail else "red",
-    ))
+    console.print(
+        Panel(
+            f"[bold]SecureFlow Security Scan[/bold]\n"
+            f"Target: {result.target}\n"
+            f"Duration: {result.duration_seconds:.1f}s\n"
+            f"Scanners: {', '.join(result.scanner_used)}",
+            title="Scan Complete",
+            border_style="green" if assessment.pass_fail else "red",
+        )
+    )
 
     # Score
     grade_color = "green" if assessment.pass_fail else "red"
-    console.print(f"\n[{grade_color}]Risk Score: {assessment.score:.1f}/100 (Grade: {assessment.grade})[/{grade_color}]")
+    console.print(
+        f"\n[{grade_color}]Risk Score: {assessment.score:.1f}/100 (Grade: {assessment.grade})[/{grade_color}]"
+    )
     console.print(f"Status: {'PASS' if assessment.pass_fail else 'FAIL'}")
 
     if not result.findings:
@@ -67,7 +71,9 @@ def format_human(result: ScanResult, assessment: RiskAssessment) -> None:
     for sev in ["critical", "high", "medium", "low", "info"]:
         count = counts.get(sev, 0)
         if count > 0:
-            console.print(f"  [{severity_colors[sev]}]{sev.upper()}: {count}[/{severity_colors[sev]}]")
+            console.print(
+                f"  [{severity_colors[sev]}]{sev.upper()}: {count}[/{severity_colors[sev]}]"
+            )
 
     # Top findings
     console.print("\n[bold]Top Findings:[/bold]")
@@ -144,9 +150,15 @@ def main(ctx: click.Context, verbose: bool, quiet: bool) -> None:
 @click.argument("target", type=click.Path(exists=True, path_type=Path))
 @click.option("-s", "--scanners", multiple=True, help="Specific scanners to run")
 @click.option("-o", "--output", type=click.Choice(["human", "json"]), default="human")
-@click.option("--fail-on", type=click.Choice(["critical", "high", "medium", "low"]), default=None,
-              help="Fail exit code if findings at this severity or above")
-@click.option("--config-file", type=click.Path(path_type=Path), default=None, help="Config file path")
+@click.option(
+    "--fail-on",
+    type=click.Choice(["critical", "high", "medium", "low"]),
+    default=None,
+    help="Fail exit code if findings at this severity or above",
+)
+@click.option(
+    "--config-file", type=click.Path(path_type=Path), default=None, help="Config file path"
+)
 @click.pass_context
 def scan(
     ctx: click.Context,
@@ -184,9 +196,7 @@ def scan(
     if fail_on:
         fail_threshold = Severity(fail_on).weight
         has_failures = any(
-            f.severity.weight >= fail_threshold
-            for f in result.findings
-            if f.is_active
+            f.severity.weight >= fail_threshold for f in result.findings if f.is_active
         )
         if has_failures:
             sys.exit(1)
@@ -239,7 +249,9 @@ def doctor(ctx: click.Context) -> None:
 
     # pip-audit
     pip_audit = shutil.which("pip-audit")
-    table.add_row("pip-audit", "OK" if pip_audit else "MISSING", pip_audit or "pip install pip-audit")
+    table.add_row(
+        "pip-audit", "OK" if pip_audit else "MISSING", pip_audit or "pip install pip-audit"
+    )
 
     # Trivy
     trivy = shutil.which("trivy")

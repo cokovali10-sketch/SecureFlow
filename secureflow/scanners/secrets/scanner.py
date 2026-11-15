@@ -13,7 +13,6 @@ from typing import Any
 from secureflow.findings.models import ScannerType
 from secureflow.scanners.base.scanner import ScannerBase, ScannerRegistry
 
-
 # Pattern definitions: (rule_id, severity, confidence, title, description, regex, remediation)
 SECRET_PATTERNS: list[tuple[str, str, str, str, str, str, str]] = [
     (
@@ -135,7 +134,7 @@ class SecretsScanner(ScannerBase):
     name = "secrets"
     description = "Detects hardcoded secrets, API keys, tokens, and credentials"
 
-    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list:
+    def scan(self, target: Path, options: dict[str, Any] | None = None) -> list[Any]:
         """Scan target for hardcoded secrets."""
         from secureflow.findings.models import Finding
 
@@ -162,11 +161,39 @@ class SecretsScanner(ScannerBase):
             return [target]
 
         extensions = {
-            ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".go", ".rs",
-            ".rb", ".php", ".cs", ".cpp", ".c", ".h", ".hpp", ".sh",
-            ".bash", ".yml", ".yaml", ".json", ".toml", ".ini", ".cfg",
-            ".conf", ".env", ".config", ".xml", ".sql", ".gradle",
-            ".tf", ".hcl", ".dockerfile", ".md",
+            ".py",
+            ".js",
+            ".ts",
+            ".jsx",
+            ".tsx",
+            ".java",
+            ".go",
+            ".rs",
+            ".rb",
+            ".php",
+            ".cs",
+            ".cpp",
+            ".c",
+            ".h",
+            ".hpp",
+            ".sh",
+            ".bash",
+            ".yml",
+            ".yaml",
+            ".json",
+            ".toml",
+            ".ini",
+            ".cfg",
+            ".conf",
+            ".env",
+            ".config",
+            ".xml",
+            ".sql",
+            ".gradle",
+            ".tf",
+            ".hcl",
+            ".dockerfile",
+            ".md",
         }
 
         files: list[Path] = []
@@ -178,8 +205,16 @@ class SecretsScanner(ScannerBase):
     def _should_exclude(self, path: Path, extra_exclude: set[str]) -> bool:
         """Check if path should be excluded."""
         blocked = {
-            ".git", "node_modules", "__pycache__", ".venv", "venv",
-            ".tox", ".mypy_cache", ".pytest_cache", "dist", "build",
+            ".git",
+            "node_modules",
+            "__pycache__",
+            ".venv",
+            "venv",
+            ".tox",
+            ".mypy_cache",
+            ".pytest_cache",
+            "dist",
+            "build",
         }
         blocked.update(extra_exclude)
 
@@ -188,7 +223,7 @@ class SecretsScanner(ScannerBase):
                 return True
         return False
 
-    def _scan_file(self, file_path: Path, root: Path) -> list:
+    def _scan_file(self, file_path: Path, root: Path) -> list[Any]:
         """Scan a single file for secrets."""
         from secureflow.findings.models import Finding
 

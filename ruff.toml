@@ -1,0 +1,18 @@
+target-version = "py310"
+line-length = 100
+
+[lint]
+# Errors, pyflakes, import order, bugbear and pyupgrade: rules that catch
+# real defects. Style-only families are intentionally out of scope.
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = [
+    "E501",   # line length is handled by the formatter
+    "E402",   # module-level imports after sys.path setup are intentional
+    "UP042",  # str+Enum is used for JSON serialisation
+    "B904",   # exception chaining is not used consistently here
+    "SIM110", # any() rewrite is not clearer for these comprehensions
+    "SIM102", # nested ifs are clearer than compound conditions here
+]
+
+[lint.isort]
+known-first-party = ["secureflow"]

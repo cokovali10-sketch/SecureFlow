@@ -4,9 +4,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from secureflow.api.app import app
+
 # --- константы вынесены FORGE refactor ---
 CONST_200 = 200
-
 
 
 @pytest.fixture

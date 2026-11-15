@@ -1,19 +1,19 @@
 """Tests for the findings model."""
 
 import pytest
+
 from secureflow.findings.models import (
     Confidence,
     Finding,
     FindingStatus,
     Location,
-    Reference,
-    ScanResult,
     ScannerType,
+    ScanResult,
     Severity,
 )
+
 # --- константы вынесены FORGE refactor ---
 CONST_7 = 7.0
-
 
 
 class TestSeverity:
@@ -174,9 +174,30 @@ class TestScanResult:
     def test_findings_by_severity(self):
         r = ScanResult(target="/test")
         r.findings = [
-            Finding(scanner=ScannerType.SECRETS, rule="a", severity=Severity.HIGH, confidence=Confidence.HIGH, title="A", description=""),
-            Finding(scanner=ScannerType.SECRETS, rule="b", severity=Severity.HIGH, confidence=Confidence.HIGH, title="B", description=""),
-            Finding(scanner=ScannerType.SECRETS, rule="c", severity=Severity.LOW, confidence=Confidence.HIGH, title="C", description=""),
+            Finding(
+                scanner=ScannerType.SECRETS,
+                rule="a",
+                severity=Severity.HIGH,
+                confidence=Confidence.HIGH,
+                title="A",
+                description="",
+            ),
+            Finding(
+                scanner=ScannerType.SECRETS,
+                rule="b",
+                severity=Severity.HIGH,
+                confidence=Confidence.HIGH,
+                title="B",
+                description="",
+            ),
+            Finding(
+                scanner=ScannerType.SECRETS,
+                rule="c",
+                severity=Severity.LOW,
+                confidence=Confidence.HIGH,
+                title="C",
+                description="",
+            ),
         ]
         counts = r.findings_by_severity
         assert counts["high"] == 2
@@ -185,13 +206,21 @@ class TestScanResult:
     def test_deduplicate(self):
         r = ScanResult(target="/test")
         f1 = Finding(
-            scanner=ScannerType.SECRETS, rule="rule", severity=Severity.HIGH,
-            confidence=Confidence.HIGH, title="Title", description="",
+            scanner=ScannerType.SECRETS,
+            rule="rule",
+            severity=Severity.HIGH,
+            confidence=Confidence.HIGH,
+            title="Title",
+            description="",
             location=Location(file_path="a.py", line=10),
         )
         f2 = Finding(
-            scanner=ScannerType.SECRETS, rule="rule", severity=Severity.MEDIUM,
-            confidence=Confidence.HIGH, title="Title", description="",
+            scanner=ScannerType.SECRETS,
+            rule="rule",
+            severity=Severity.MEDIUM,
+            confidence=Confidence.HIGH,
+            title="Title",
+            description="",
             location=Location(file_path="a.py", line=10),
         )
         r.findings = [f1, f2]
