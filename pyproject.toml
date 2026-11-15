@@ -78,6 +78,9 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+# FastAPI routes are registered through untyped framework decorators; the
+# handlers themselves are fully annotated.
+disable_error_code = ["untyped-decorator"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
